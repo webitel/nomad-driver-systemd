@@ -14,7 +14,7 @@ type unitPolicy struct {
 	denied  []*regexp.Regexp
 }
 
-// compileUnitPolicy builds a policy from the allowed_units and denied_units
+// compileUnitPolicy builds a policy from the units.allowed and units.denied
 // pattern lists.
 //
 // It returns an error naming the offending pattern if any of them is not a valid
@@ -25,7 +25,7 @@ func compileUnitPolicy(allowed, denied []string) (*unitPolicy, error) {
 	for _, pattern := range allowed {
 		re, err := regexp.Compile(pattern)
 		if err != nil {
-			return nil, fmt.Errorf("compile allowed_units pattern %q: %w", pattern, err)
+			return nil, fmt.Errorf("compile units.allowed pattern %q: %w", pattern, err)
 		}
 
 		p.allowed = append(p.allowed, re)
@@ -34,7 +34,7 @@ func compileUnitPolicy(allowed, denied []string) (*unitPolicy, error) {
 	for _, pattern := range denied {
 		re, err := regexp.Compile(pattern)
 		if err != nil {
-			return nil, fmt.Errorf("compile denied_units pattern %q: %w", pattern, err)
+			return nil, fmt.Errorf("compile units.denied pattern %q: %w", pattern, err)
 		}
 
 		p.denied = append(p.denied, re)
@@ -54,7 +54,7 @@ func compileUnitPolicy(allowed, denied []string) (*unitPolicy, error) {
 func (p *unitPolicy) check(unit string) error {
 	for _, re := range p.denied {
 		if re.MatchString(unit) {
-			return fmt.Errorf("unit %q matches denied_units pattern %q", unit, re.String())
+			return fmt.Errorf("unit %q matches units.denied pattern %q", unit, re.String())
 		}
 	}
 
@@ -68,7 +68,7 @@ func (p *unitPolicy) check(unit string) error {
 		}
 	}
 
-	return fmt.Errorf("unit %q does not match any allowed_units pattern", unit)
+	return fmt.Errorf("unit %q does not match any units.allowed pattern", unit)
 }
 
 // claimUnit records taskID as the sole owner of unit.

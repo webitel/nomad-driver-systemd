@@ -1,9 +1,65 @@
 package plugin
 
 import (
+	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/nomad/helper/pluginutils/hclutils"
 )
+
+func TestConfig_Decode(t *testing.T) {
+	cases := []struct {
+		name string
+		hcl  string
+		want Config
+	}{
+		{
+			name: "empty config leaves every unit eligible",
+			hcl:  `config {}`,
+			want: Config{},
+		},
+		{
+			name: "units block with both lists",
+			hcl: `config {
+				units {
+					allowed = ["^app-.*\\.service$"]
+					denied  = ["^nomad\\.service$", "^sshd?\\.service$"]
+				}
+				pprof_addr = "127.0.0.1:6061"
+			}`,
+			want: Config{
+				Units: UnitsConfig{
+					Allowed: []string{`^app-.*\.service$`},
+					Denied:  []string{`^nomad\.service$`, `^sshd?\.service$`},
+				},
+				PprofAddr: "127.0.0.1:6061",
+			},
+		},
+		{
+			name: "units block with only denied",
+			hcl: `config {
+				units {
+					denied = ["^nomad\\.service$"]
+				}
+			}`,
+			want: Config{
+				Units: UnitsConfig{Denied: []string{`^nomad\.service$`}},
+			},
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			var got Config
+			hclutils.NewConfigParser(configSpec).ParseHCL(t, tc.hcl, &got)
+
+			if !reflect.DeepEqual(got, tc.want) {
+				t.Fatalf("decoded config = %#v, want %#v", got, tc.want)
+			}
+		})
+	}
+}
 
 func TestTaskConfig_Validate(t *testing.T) {
 	cases := []struct {
