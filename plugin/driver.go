@@ -1,6 +1,3 @@
-// Copyright (c) HashiCorp, Inc.
-// SPDX-License-Identifier: MPL-2.0
-
 package plugin
 
 import (
@@ -59,7 +56,7 @@ type Driver struct {
 	// ordering guaranteed between them.
 	systemdMgr atomic.Pointer[systemd.Manager]
 
-	// unitPolicy is the compiled allowed_units/denied_units policy. Atomic for
+	// unitPolicy is the compiled units.allowed/units.denied policy. Atomic for
 	// the same reason as systemdMgr.
 	unitPolicy atomic.Pointer[unitPolicy]
 
@@ -132,7 +129,7 @@ func (d *Driver) SetConfig(cfg *base.Config) error {
 
 	d.compute = cfg.AgentConfig.Compute()
 
-	policy, err := compileUnitPolicy(config.AllowedUnits, config.DeniedUnits)
+	policy, err := compileUnitPolicy(config.Units.Allowed, config.Units.Denied)
 	if err != nil {
 		return fmt.Errorf("invalid unit policy configuration: %w", err)
 	}

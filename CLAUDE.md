@@ -13,7 +13,7 @@ Consequences that shape the whole codebase:
 - **No isolation of any kind.** No filesystem, no network namespace, no signals, no exec. Units
   live outside the allocation, so the driver enforces its own safety rules instead (see below).
 - **Units are host-global.** At most one task may manage a given unit at a time
-  (`Driver.unitOwners`), and `allowed_units`/`denied_units` regex lists gate which units are
+  (`Driver.unitOwners`), and the `units { allowed, denied }` regex lists gate which units are
   eligible at all. Without those lists any job submitter can take over arbitrary host units.
 - **cgo + Linux only.** `sdjournal` links against libsystemd, and resource stats are read from the
   unified (v2) cgroup hierarchy only — on v1/hybrid hosts units still run but stats read as zeros

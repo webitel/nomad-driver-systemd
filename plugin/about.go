@@ -44,9 +44,11 @@ var (
 var (
 	// configSpec is the HCL specification for the driver configuration.
 	configSpec = hclspec.NewObject(map[string]*hclspec.Spec{
-		"allowed_units": hclspec.NewAttr("allowed_units", "list(string)", false),
-		"denied_units":  hclspec.NewAttr("denied_units", "list(string)", false),
-		"pprof_addr":    hclspec.NewAttr("pprof_addr", "string", false),
+		"units": hclspec.NewBlock("units", false, hclspec.NewObject(map[string]*hclspec.Spec{
+			"allowed": hclspec.NewAttr("allowed", "list(string)", false),
+			"denied":  hclspec.NewAttr("denied", "list(string)", false),
+		})),
+		"pprof_addr": hclspec.NewAttr("pprof_addr", "string", false),
 	})
 
 	// taskConfigSpec is the HCL specification for per-task configuration

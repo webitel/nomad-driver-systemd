@@ -17,9 +17,9 @@ filesystem or network isolation, no signals, no `nomad alloc exec`. Any unit on 
 reachable by name. Two rules limit the damage:
 
 - A unit may be managed by at most one task at a time.
-- `allowed_units` / `denied_units` restrict which units are eligible at all.
+- The `units` block (`allowed` / `denied`) restricts which units are eligible at all.
 
-**Without `allowed_units` or `denied_units`, any job submitter can take over arbitrary host units,
+**Without a `units` block, any job submitter can take over arbitrary host units,
 including `nomad.service` itself.** Configure them.
 
 ## Requirements
@@ -62,8 +62,10 @@ Configure the Nomad client. The plugin block is named after the binary:
 # /etc/nomad.d/systemd.hcl
 plugin "nomad-driver-systemd" {
   config {
-    allowed_units = ["^app-.*\\.service$"]
-    denied_units  = ["^nomad\\.service$", "^sshd?\\.service$"]
+    units {
+      allowed = ["^app-.*\\.service$"]
+      denied  = ["^nomad\\.service$", "^sshd?\\.service$"]
+    }
   }
 }
 ```
@@ -78,9 +80,15 @@ nomad node status -self
 
 | Option          | Type           | Description                                                                                                                           |
 |-----------------|----------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| `allowed_units` | `list(string)` | Regexes. If non-empty, a task's unit must match at least one (allowlist mode).                                                         |
-| `denied_units`  | `list(string)` | Regexes. A unit matching any of them is always rejected, even if it also matches `allowed_units`.                                      |
+| `units`         | block          | Which units tasks may manage; see below. Without it every unit on the host is eligible.                                               |
 | `pprof_addr`    | `string`       | Address for a debug pprof server, e.g. `127.0.0.1:6061`. Empty disables it. Keep it on loopback — the profiles expose process memory.   |
+
+The `units` block:
+
+| Option    | Type           | Description                                                                                 |
+|-----------|----------------|---------------------------------------------------------------------------------------------|
+| `allowed` | `list(string)` | Regexes. If non-empty, a task's unit must match at least one (allowlist mode).              |
+| `denied`  | `list(string)` | Regexes. A unit matching any of them is always rejected, even if it also matches `allowed`. |
 
 Both pattern lists are matched unanchored, as Go's `regexp.MatchString` does: `nginx\.service`
 also matches `not-my-nginx.service`. Anchor patterns with `^` and `$`. An invalid regex fails

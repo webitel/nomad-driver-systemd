@@ -101,7 +101,7 @@ func TestUnitPolicy_ErrorNamesTheOffendingRule(t *testing.T) {
 		t.Fatalf("error should name the matching pattern %s, got: %v", want, err)
 	}
 
-	if !strings.Contains(err.Error(), "denied_units") {
+	if !strings.Contains(err.Error(), "units.denied") {
 		t.Fatalf("error should say which list rejected the unit, got: %v", err)
 	}
 }
