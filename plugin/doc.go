@@ -1,6 +1,3 @@
-// Copyright (c) HashiCorp, Inc.
-// SPDX-License-Identifier: MPL-2.0
-
 // Package plugin implements a Nomad task driver that runs tasks as systemd units.
 //
 // [New] returns the driver Nomad loads over its plugin protocol. Each task names
