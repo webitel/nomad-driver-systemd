@@ -11,14 +11,16 @@ const (
 	// pluginName is the name of the plugin as it will be known in Nomad
 	pluginName = "systemd"
 
-	// pluginVersion is the current version of the plugin
-	pluginVersion = "v0.1.0"
-
 	// taskHandleVersion is the version of the task handle encoding
 	taskHandleVersion = 1
 )
 
 var (
+	// pluginVersion is the version reported to Nomad and in the fingerprint.
+	// Release builds set it at link time with
+	// -ldflags "-X github.com/webitel/nomad-driver-systemd/plugin.pluginVersion=<version>".
+	pluginVersion = "dev"
+
 	// pluginInfo is the response returned for the PluginInfo RPC
 	pluginInfo = &base.PluginInfoResponse{
 		Type:              base.PluginTypeDriver,
