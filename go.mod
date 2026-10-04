@@ -8,7 +8,7 @@ replace github.com/armon/go-metrics => github.com/hashicorp/go-metrics v0.5.3
 
 require (
 	github.com/coreos/go-systemd/v22 v22.7.0
-	github.com/godbus/dbus/v5 v5.1.0
+	github.com/godbus/dbus/v5 v5.2.2
 	github.com/hashicorp/go-hclog v1.6.3
 	github.com/hashicorp/nomad v1.11.3
 )
