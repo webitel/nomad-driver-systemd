@@ -7,8 +7,11 @@ BIN_DIR=bin
 # Formatter/linter (golangci-lint provides both)
 GOLANGCI_LINT=golangci-lint
 
+# Version reported by the plugin, injected at link time
+VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
+
 # Build flags
-BUILD_FLAGS=-ldflags="-s -w"
+BUILD_FLAGS=-ldflags="-s -w -X github.com/webitel/nomad-driver-systemd/plugin.pluginVersion=$(VERSION)"
 
 # Detect if we're on Linux
 UNAME_S := $(shell uname -s)
